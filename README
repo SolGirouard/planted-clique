@@ -1,0 +1,36 @@
+planted-clique.py is the main file to run, and I have tried to make things as
+modular as possible so that implementing and testing a new planted clique
+algorithm is super-straightforward. 
+
+The basic framework is that you define a function 
+
+    def myFunction(graph, plantSize):
+       ...
+
+that accepts as input a graph (in igraph form) and an integer representing the
+plant size, and returns as output a list of vertices (igraph vertices) it
+thinks are in the plant.
+
+Then you can test the algorithm on sqrt(n) plants by running
+
+    testPlantFindingAlgorithm(myFunction)
+
+The default here is to test it on graphs with n vertices, where n is in the
+range [200, 400, 600, ..., 1800]. But you can change both the vertexRange and
+plantSize by either providing a custom list of vertex sizes or by implementing
+a "Scale" object which I've put in the scale.py file. A simple example is the
+"doubler" object which doubles the number of vertices in some range.
+
+The test function runs your algorithm twenty times on each graph size you
+specify, and prints out the proportion of times it succeeded along with the
+size of G and the plant.
+
+Finally, if you want to have your algorithm actually know about the plant (to,
+say, print out statistics about how long it goes before destroying the plant or
+whatever), I've set it up so that you can query the vertex as follows.
+
+    aVertex = G.vs[index]
+    if aVertex['plant']:
+       print('found a plant vertex!')
+
+Let me know if you have any questions.

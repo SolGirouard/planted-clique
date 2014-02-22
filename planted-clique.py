@@ -81,6 +81,7 @@ def deleteLargestDegree(G, plantSize):
       else:
          break
 
+   print(len(G.vs))
    return heapq.nlargest(plantSize, G.vs, key=lambda v: degrees[v.index])
 
 
@@ -92,5 +93,5 @@ if __name__ == "__main__":
    # testPlantFindingAlgorithm(batchDeleteSmallestDegree) # definitely fails
 
    #testPlantFindingAlgorithm(deleteLargestDegree, getPlantSize = rootNLogN) # this should obviously work
-   #testPlantFindingAlgorithm(deleteLargestDegree) # definitely fails
+   testPlantFindingAlgorithm(deleteLargestDegree) # definitely fails
    pass

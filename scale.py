@@ -16,6 +16,9 @@ class Scale(object):
    def __iter__(self):
       return self
 
+   def next(self):
+      return self.__next__()
+
 doubler = lambda a, b: Scale(a, b, lambda y: 2*y)
 adder = lambda a, b, inc: Scale(a, b, lambda y: y + inc)
 
