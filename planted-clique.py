@@ -7,6 +7,7 @@ import heapq
 from scale import doubler, adder
 
 rootNLogN = lambda n: int(math.sqrt(n * math.log(n)))
+justUnderRootN = lambda n: int(n**(0.5 - 0.05))
 
 
 def addPlant(G, plantSize):
@@ -63,12 +64,14 @@ def batchDeleteSmallestDegree(G, plantSize):
 
 
 def deleteLargestDegree(G, plantSize):
-   # delete the largest degree vertex which is definitely not in the clique
+   # delete the largest degree vertex which is whp not in the clique
    # if you cannot, stop and output highest plantSize many vertices
 
+   thresholdAdditive = plantSize * math.sqrt(math.log(len(G.vs))) / 8
    def possiblyInClique(v, degrees):
-      return (degrees[v.index] >= plantSize and
-         len([w for w in v.neighbors() if degrees[w.index] >= plantSize]) >= plantSize)
+      threshold = len(G.vs) / 2 + thresholdAdditive
+      return (degrees[v.index] >= threshold and
+         len([w for w in v.neighbors() if degrees[w.index] >= threshold]) >= threshold)
 
 
    while True:
@@ -76,10 +79,14 @@ def deleteLargestDegree(G, plantSize):
       notCliqueVertices = [v for v in G.vs if not possiblyInClique(v, degrees)]
 
       if len(notCliqueVertices) == 0:
-         vertexToDelete = min(G.vs, key=lambda v: degrees[v.index])
-         G.delete_vertices([vertexToDelete.index])
-      else:
          break
+      else:
+         vertexToDelete = min(G.vs, key=lambda v: degrees[v.index])
+
+         if G.vs[vertexToDelete.index]['plant']:
+            raise Exception("Deleting a plant vertex!")
+
+         G.delete_vertices([vertexToDelete.index])
 
    print(len(G.vs))
    return heapq.nlargest(plantSize, G.vs, key=lambda v: degrees[v.index])
@@ -93,5 +100,6 @@ if __name__ == "__main__":
    # testPlantFindingAlgorithm(batchDeleteSmallestDegree) # definitely fails
 
    #testPlantFindingAlgorithm(deleteLargestDegree, getPlantSize = rootNLogN) # this should obviously work
-   testPlantFindingAlgorithm(deleteLargestDegree) # definitely fails
+   # testPlantFindingAlgorithm(deleteLargestDegree, vertexRange=doubler(128, 16787), getPlantSize=justUnderRootN)
+   testPlantFindingAlgorithm(deleteLargestDegree, vertexRange=doubler(256, 65536)) # fails, but close!
    pass
